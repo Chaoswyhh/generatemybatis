@@ -46,6 +46,11 @@ function activate(context) {
 				propertyPrefix = "#{" + line +".";
 				return;
 			}
+
+			if (!line.trim()) {
+				return;
+			}
+
 			//console.log("propertyPrefix:["+propertyPrefix+"]");
 
 			let column = line.length > 0 ? line.match(/column=\"(\S*)\" jdbcType/)[1] : "";
