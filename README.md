@@ -16,6 +16,12 @@ For example if there is an image subfolder under your extension project workspac
 
 If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
+1.xml文件必须保存；
+
+2.第一行写对象名；
+
+3.正则解析不了会报错；
+
 ## Extension Settings
 
 Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
