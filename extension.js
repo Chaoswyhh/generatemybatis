@@ -38,11 +38,13 @@ function activate(context) {
 		let columnStr = "";
 		let propertyStr = "";
 
+		let entity = "";
 		let propertyPrefix = "";
 
 		fileContentArr.forEach( (line, index) => {
 			if (index === 0) {
 				//console.log("first line="+line);
+				entity = line;
 				propertyPrefix = "#{" + line +".";
 				return;
 			}
@@ -58,13 +60,17 @@ function activate(context) {
 			//console.log("column :" + column);
 			//console.log("property :" + property);
 
-			let columnSuffix = index === fileContentArr.length -1 ? "" : ", ";
+			//let columnSuffix = index === fileContentArr.length -1 ? "" : ", ";
+			let columnSuffix = ", ";
 			//console.log("columnSuffix:["+columnSuffix+"]");
 			columnStr = columnStr + column + columnSuffix;
 			
-			let propertySuffix = index === fileContentArr.length -1 ? "}" : "}, ";
+			//let propertySuffix = index === fileContentArr.length -1 ? "}" : "}, ";
+			let propertySuffix = "}, ";
 			//console.log("propertySuffix:["+propertySuffix+"]");
 			propertyStr = propertyStr + propertyPrefix + property + propertySuffix;
+
+			//console.log("index="+index+", length="+fileContentArr.length);
 
 			//let contentLength = content.length;
 			//fs.appendFileSync(currentlyOpenTabFilePath, content + ((index == contentLength - 1) ? '' : '\n'));
@@ -73,10 +79,20 @@ function activate(context) {
 		//console.log("columnStr:["+columnStr+"]");
 		//console.log("propertyStr:["+propertyStr+"]");
 
-		fs.appendFileSync(currentlyOpenTabFilePath, ' '+'\n');
-		fs.appendFileSync(currentlyOpenTabFilePath, columnStr + "\n");
-		fs.appendFileSync(currentlyOpenTabFilePath, ' '+'\n');
-		fs.appendFileSync(currentlyOpenTabFilePath, propertyStr + "\n");
+		columnStr = columnStr.substr(0, columnStr.length - 2);
+		propertyStr = propertyStr.substr(0, propertyStr.length - 2);
+
+		fs.appendFileSync(currentlyOpenTabFilePath, '\n\n');
+		fs.appendFileSync(currentlyOpenTabFilePath, '<insert id="insertBatch" parameterType="java.util.List">' + '\n');
+		fs.appendFileSync(currentlyOpenTabFilePath, '  INSERT INTO table' + '\n');
+		fs.appendFileSync(currentlyOpenTabFilePath, '    \(' + columnStr + '\)' + '\n');
+		fs.appendFileSync(currentlyOpenTabFilePath, '  VALUES' + '\n');
+		fs.appendFileSync(currentlyOpenTabFilePath, '  <foreach collection ="list" item="' + entity + '" separator =",">'+'\n');
+		fs.appendFileSync(currentlyOpenTabFilePath, '    \(' + propertyStr + '\)' + '\n');
+		fs.appendFileSync(currentlyOpenTabFilePath, '  </foreach>' + "\n");
+		fs.appendFileSync(currentlyOpenTabFilePath, '</insert>' + "\n\n\n");
+
+		fs.appendFileSync(currentlyOpenTabFilePath, 'int insertBatch(@Param("list") List<> list);\n');
 
 		//let docContent = doc.getText();
 		//console.log(docContent);
@@ -84,7 +100,7 @@ function activate(context) {
 		console.log("Generate END !");
 
 		// Display a message box to the user
-		vscode.window.showInformationMessage('Generate END !');
+		//vscode.window.showInformationMessage('Generate END !');
 	});
 
 	context.subscriptions.push(disposable);
