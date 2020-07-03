@@ -11,14 +11,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:generatemybatis.helloWorld"
+		"onCommand:generatemybatis.generateMybatisInsert"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "generatemybatis.helloWorld",
-				"title": "Hello World"
+				"command": "generatemybatis.generateMybatisInsert",
+				"title": "Generate Mybatis Insert"
 			}
 		]
 	},
